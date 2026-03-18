@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
 * 2007-2020 PrestaShop
 *
@@ -35,7 +37,7 @@ class Ps_Sharebuttons extends Module implements WidgetInterface
     /**
      * @var string Name of the module running on PS 1.6.x. Used for data migration.
      */
-    const PS_16_EQUIVALENT_MODULE = 'socialsharing';
+    public const PS_16_EQUIVALENT_MODULE = 'socialsharing';
 
     protected static $networks = ['Facebook', 'Twitter', 'Pinterest'];
 

@@ -62,6 +62,12 @@ class Ps_Sharebuttons extends Module implements WidgetInterface
         $this->templateFile = 'module:ps_sharebuttons/views/templates/hook/ps_sharebuttons.tpl';
     }
 
+    /**
+     * Installs the module, migrating configuration from the PrestaShop 1.6 equivalent if present,
+     * and registers the displayProductAdditionalInfo hook.
+     *
+     * @return bool True on success, false on failure
+     */
     public function install()
     {
         if (!$this->uninstallPrestaShop16Module()) {
@@ -97,6 +103,11 @@ class Ps_Sharebuttons extends Module implements WidgetInterface
         return true;
     }
 
+    /**
+     * Returns current configuration values for all social network toggles.
+     *
+     * @return array<string, int> Map of configuration key to enabled flag (0 or 1)
+     */
     public function getConfigFieldsValues()
     {
         $values = [];
@@ -108,6 +119,11 @@ class Ps_Sharebuttons extends Module implements WidgetInterface
         return $values;
     }
 
+    /**
+     * Renders the module configuration form and handles the save form submission.
+     *
+     * @return string HTML of the configuration page
+     */
     public function getContent()
     {
         $output = '';
@@ -166,6 +182,14 @@ class Ps_Sharebuttons extends Module implements WidgetInterface
         ]);
     }
 
+    /**
+     * Renders the social sharing buttons widget on the product page.
+     *
+     * @param string $hookName Name of the hook rendering this widget
+     * @param array  $params   Hook parameters
+     *
+     * @return string Rendered HTML of the sharing buttons, or empty string if not on a product page
+     */
     public function renderWidget($hookName, array $params)
     {
         $this->smarty->assign($this->getWidgetVariables($hookName, $params));
@@ -173,6 +197,14 @@ class Ps_Sharebuttons extends Module implements WidgetInterface
         return $this->fetch($this->templateFile);
     }
 
+    /**
+     * Returns template variables for the sharing buttons widget.
+     *
+     * @param string $hookName Name of the hook rendering this widget
+     * @param array  $params   Hook parameters
+     *
+     * @return array<string, mixed>|null Social share links keyed by network name, or null if not on a product page
+     */
     public function getWidgetVariables($hookName, array $params)
     {
         if (!method_exists($this->context->controller, 'getProduct')) {

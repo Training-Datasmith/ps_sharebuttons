@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="bootstrap.php"
+         colors="false"
+         verbose="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         backupGlobals="false"
+         backupStaticAttributes="false">
+    <testsuites>
+        <testsuite name="module-tests">
+            <file>ConfigFormTest.php</file>
+            <file>DirectoryGuardTest.php</file>
+            <file>InstallTest.php</file>
+            <file>ModuleFileGuardTest.php</file>
+            <file>ModuleMetadataTest.php</file>
+            <file>RenderWidgetTest.php</file>
+            <file>SuiteManifestTest.php</file>
+            <file>UpgradeTest.php</file>
+            <file>WidgetVariablesTest.php</file>
+        </testsuite>
+    </testsuites>
+</phpunit>

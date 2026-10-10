@@ -74,7 +74,7 @@ for ($i = count($files) - 1; $i > 0; $i--) {
 }
 $out = getenv("SHUFFLE_XML");
 $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-$xml .= "<phpunit bootstrap=\"" . $root . "/tests/bootstrap.php\" colors=\"false\" verbose=\"true\" convertErrorsToExceptions=\"true\" convertNoticesToExceptions=\"true\" convertWarningsToExceptions=\"true\" backupGlobals=\"false\" backupStaticAttributes=\"false\">\n";
+$xml .= "<phpunit bootstrap=\"" . $root . "/tests/bootstrap.php\" colors=\"false\" verbose=\"true\" beStrictAboutTestsThatDoNotTestAnything=\"true\" checkForUnintentionallyCoveredCode=\"true\" beStrictAboutOutputDuringTests=\"true\" beStrictAboutTestSize=\"true\" beStrictAboutTodoAnnotatedTests=\"true\" convertErrorsToExceptions=\"true\" convertNoticesToExceptions=\"true\" convertWarningsToExceptions=\"true\" backupGlobals=\"false\" backupStaticAttributes=\"false\">\n";
 $xml .= "  <testsuites><testsuite name=\"module-tests\">\n";
 foreach ($files as $f) {
   $xml .= "    <file>" . $root . "/tests/" . $f . "</file>\n";

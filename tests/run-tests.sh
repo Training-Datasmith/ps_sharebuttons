@@ -5,7 +5,9 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PHAR="${1:?phpunit phar path}"
 PHP_BIN="${PHP_BIN:-php}"
 
-if [[ "$("${PHP_BIN}" -r 'echo PHP_VERSION;')" != "5.6.40" ]]; then
+PHP_FLAGS=(-d error_reporting=-1 -d display_errors=stderr -d display_startup_errors=1 -d log_errors=0)
+
+if [[ "$("${PHP_BIN}" "${PHP_FLAGS[@]}" -r 'echo PHP_VERSION;')" != "5.6.40" ]]; then
   echo "PHP 5.6.40 required" >&2
   exit 1
 fi
@@ -16,8 +18,6 @@ trap 'rm -rf "${TMP_BASE}"' EXIT
 JUNIT_SORTED="${TMP_BASE}/junit-sorted.xml"
 JUNIT_SHUFFLE="${TMP_BASE}/junit-shuffle.xml"
 SHUFFLE_XML="${TMP_BASE}/phpunit-shuffle.xml"
-
-PHP_FLAGS=(-d error_reporting=-1 -d display_errors=stderr -d display_startup_errors=1 -d log_errors=0)
 
 run_phpunit() {
   local config="$1"
@@ -51,7 +51,13 @@ run_phpunit() {
 OUT_SORTED="$(run_phpunit "${ROOT}/tests/phpunit.xml" "${JUNIT_SORTED}")"
 OK_LINE_SORTED="$(grep '^OK (' "${OUT_SORTED}" | tail -n1)"
 
+if [[ "${OK_LINE_SORTED}" != "OK (53 tests,"* ]]; then
+  echo "Unexpected sorted test summary: ${OK_LINE_SORTED}" >&2
+  exit 1
+fi
+
 export ROOT SHUFFLE_XML
+GEN_OUT="${TMP_BASE}/shuffle-gen-out.txt"
 "${PHP_BIN}" "${PHP_FLAGS[@]}" -r '
 $root = getenv("ROOT");
 $files = array(
@@ -81,7 +87,17 @@ foreach ($files as $f) {
 }
 $xml .= "  </testsuite></testsuites>\n</phpunit>\n";
 file_put_contents($out, $xml);
-'
+' >"${GEN_OUT}" 2>&1
+if grep -E 'Notice:|Warning:|Deprecated:|Strict Standards:|Parse error:|Fatal error:|Catchable fatal error:|Recoverable fatal error:' "${GEN_OUT}"; then
+  echo "Shuffle generator emitted PHP diagnostics" >&2
+  cat "${GEN_OUT}" >&2
+  exit 1
+fi
+if [[ -s "${GEN_OUT}" ]]; then
+  echo "Shuffle generator must not print output" >&2
+  cat "${GEN_OUT}" >&2
+  exit 1
+fi
 
 OUT_SHUFFLE="$(run_phpunit "${SHUFFLE_XML}" "${JUNIT_SHUFFLE}")"
 OK_LINE_SHUFFLE="$(grep '^OK (' "${OUT_SHUFFLE}" | tail -n1)"

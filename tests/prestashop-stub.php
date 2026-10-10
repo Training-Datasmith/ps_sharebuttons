@@ -241,7 +241,7 @@ class Module
     public static $fetchReturn = 'FETCH_SENTINEL';
 
     /** @var array */
-    public static $translationReturns = array();
+    public static $translationCallCounts = array();
 
     /** @var array */
     public static $translationLog = array();
@@ -295,14 +295,14 @@ class Module
 
     protected function trans($id, array $parameters = array(), $domain = null, $locale = null)
     {
-        $key = (string) $domain . "\0" . (string) $id;
-        self::$translationLog[] = array('id' => $id, 'domain' => $domain);
-
-        if (isset(self::$translationReturns[$key])) {
-            return self::$translationReturns[$key];
+        $domainKey = (string) $domain;
+        self::$translationLog[] = array('id' => $id, 'domain' => $domainKey);
+        if (!isset(self::$translationCallCounts[$domainKey])) {
+            self::$translationCallCounts[$domainKey] = 0;
         }
+        self::$translationCallCounts[$domainKey]++;
 
-        return '__TRANS__' . $domain . '__' . $id;
+        return 'SENT[' . $domainKey . ']#' . self::$translationCallCounts[$domainKey];
     }
 
     public function displayConfirmation($string)

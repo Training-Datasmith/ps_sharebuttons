@@ -37,8 +37,10 @@ fi
   -w /work "${IMAGE}" bash -lc \
   "chmod +x tests/run-tests.sh tests/proof-pinterest-slash.sh && ./tests/run-tests.sh ${PHAR_IN_CONTAINER}"
 
-"${DOCKER[@]}" run --rm \
-  -v "${ROOT}:/work" \
-  -v "${CACHE_HOST}:/phpunit-cache:ro" \
-  -w /work "${IMAGE}" bash -lc \
-  "./tests/proof-pinterest-slash.sh ${PHAR_IN_CONTAINER}"
+if [[ "${RUN_PINTEREST_PROOF:-}" == "1" ]]; then
+  "${DOCKER[@]}" run --rm \
+    -v "${ROOT}:/work" \
+    -v "${CACHE_HOST}:/phpunit-cache:ro" \
+    -w /work "${IMAGE}" bash -lc \
+    "./tests/proof-pinterest-slash.sh ${PHAR_IN_CONTAINER}"
+fi

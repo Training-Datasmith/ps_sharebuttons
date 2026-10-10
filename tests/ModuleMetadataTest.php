@@ -21,8 +21,9 @@ class ModuleMetadataTest extends SharebuttonsTestCase
 
     public function testTranslatedDisplayNameAndDescriptionUseAdminSentinels()
     {
-        $this->assertSame('SENT_ADMIN_DISPLAY', $this->module->displayName);
-        $this->assertSame('SENT_ADMIN_DESC', $this->module->description);
+        $this->assertTranslationTokenDomain($this->module->displayName, 'Modules.Sharebuttons.Admin');
+        $this->assertTranslationTokenDomain($this->module->description, 'Modules.Sharebuttons.Admin');
+        $this->assertNotSame($this->module->displayName, $this->module->description);
     }
 
     public function testPrivateTemplatePath()

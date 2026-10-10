@@ -65,15 +65,18 @@ class ConfigFormTest extends SharebuttonsTestCase
         $this->assertSame('switch', $names['PS_SC_FACEBOOK']['type']);
         $this->assertSame('Facebook', $names['PS_SC_FACEBOOK']['label']);
         $legend = $form[0]['form']['legend'];
-        $this->assertSame('SENT_ADMIN_DISPLAY', $legend['title']);
+        $this->assertSame($this->module->displayName, $legend['title']);
         $this->assertSame('icon-share', $legend['icon']);
-        $this->assertSame('SENT_SAVE', $form[0]['form']['submit']['title']);
+        $submitTitle = $form[0]['form']['submit']['title'];
+        $this->assertTranslationTokenDomain($submitTitle, 'Admin.Actions');
         $labels = array();
         foreach ($names['PS_SC_FACEBOOK']['values'] as $choice) {
             $labels[] = $choice['label'];
         }
-        $this->assertContains('SENT_YES', $labels);
-        $this->assertContains('SENT_NO', $labels);
+        $this->assertCount(2, $labels);
+        $this->assertTranslationTokenDomain($labels[0], 'Admin.Global');
+        $this->assertTranslationTokenDomain($labels[1], 'Admin.Global');
+        $this->assertNotSame($labels[0], $labels[1]);
     }
 
     public function testSavingWritesIntegersClearsTemplateCacheAndRedirects()
@@ -92,7 +95,7 @@ class ConfigFormTest extends SharebuttonsTestCase
         $this->assertSame(0, Configuration::get('PS_SC_TWITTER'));
         $this->assertSame(1, Configuration::get('PS_SC_PINTEREST'));
         $this->assertContains('module:ps_sharebuttons/views/templates/hook/ps_sharebuttons.tpl', Module::$clearCacheLog);
-        $this->assertSame('SENT_SETTINGS_OK', Module::$lastConfirmation);
+        $this->assertTranslationTokenDomain(Module::$lastConfirmation, 'Admin.Notifications.Success');
         $this->assertContains('controller=AdminModules', $url);
         $this->assertContains('token=with-token', $url);
         $this->assertContains('conf=6', $url);

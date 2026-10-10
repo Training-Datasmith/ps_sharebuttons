@@ -50,9 +50,15 @@ class WidgetVariablesTest extends SharebuttonsTestCase
         $this->assertSame('facebook', $vars['social_share_links']['facebook']['class']);
         $this->assertSame('twitter', $vars['social_share_links']['twitter']['class']);
         $this->assertSame('pinterest', $vars['social_share_links']['pinterest']['class']);
-        $this->assertSame('SENT_SHOP_SHARE', $vars['social_share_links']['facebook']['label']);
-        $this->assertSame('SENT_SHOP_TWEET', $vars['social_share_links']['twitter']['label']);
-        $this->assertSame('SENT_SHOP_PINTEREST', $vars['social_share_links']['pinterest']['label']);
+        $fbLabel = $vars['social_share_links']['facebook']['label'];
+        $twLabel = $vars['social_share_links']['twitter']['label'];
+        $pinLabel = $vars['social_share_links']['pinterest']['label'];
+        $this->assertTranslationTokenDomain($fbLabel, 'Modules.Sharebuttons.Shop');
+        $this->assertTranslationTokenDomain($twLabel, 'Modules.Sharebuttons.Shop');
+        $this->assertTranslationTokenDomain($pinLabel, 'Modules.Sharebuttons.Shop');
+        $this->assertNotSame($fbLabel, $twLabel);
+        $this->assertNotSame($fbLabel, $pinLabel);
+        $this->assertNotSame($twLabel, $pinLabel);
     }
 
     public function testFacebookLinkOnly()

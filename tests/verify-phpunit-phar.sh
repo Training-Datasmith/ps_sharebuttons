@@ -23,7 +23,14 @@ fi
 export GNUPGHOME="$(mktemp -d)"
 chmod 700 "${GNUPGHOME}"
 gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys 0x4AA394086372C20A
-VERIFY_OUT="$(gpg --batch --status-fd 1 --verify "${ASC}" "${PHAR}" 2>&1)" || true
+VERIFY_OUT="$(gpg --batch --status-fd 1 --verify "${ASC}" "${PHAR}" 2>&1)"
+VERIFY_STATUS=$?
+if [[ ${VERIFY_STATUS} -ne 0 ]]; then
+  echo "PHPUnit PHAR GPG verify failed (exit ${VERIFY_STATUS})" >&2
+  echo "${VERIFY_OUT}" >&2
+  rm -rf "${GNUPGHOME}"
+  exit 1
+fi
 echo "${VERIFY_OUT}" | grep -q "VALIDSIG"
 FP_LINE="$(echo "${VERIFY_OUT}" | grep '^\[GNUPG:\] VALIDSIG' | head -n1)"
 if [[ -z "${FP_LINE}" ]]; then

@@ -17,7 +17,6 @@ abstract class SharebuttonsTestCase extends PHPUnit_Framework_TestCase
     {
         parent::setUp();
         $this->resetEnvironment();
-        $this->seedTranslationSentinels();
         $this->module = new Ps_Sharebuttons();
         $this->seedProductFixture();
     }
@@ -44,7 +43,7 @@ abstract class SharebuttonsTestCase extends PHPUnit_Framework_TestCase
         Module::$clearCacheLog = array();
         Module::$fetchLog = array();
         Module::$fetchReturn = 'FETCH_SENTINEL';
-        Module::$translationReturns = array();
+        Module::$translationCallCounts = array();
         Module::$translationLog = array();
         Module::$lastConfirmation = null;
         HelperForm::$lastGenerateFormArg = null;
@@ -64,20 +63,10 @@ abstract class SharebuttonsTestCase extends PHPUnit_Framework_TestCase
         Context::setInstance($this->context);
     }
 
-    protected function seedTranslationSentinels()
+    protected function assertTranslationTokenDomain($token, $domain)
     {
-        $map = array(
-            'Modules.Sharebuttons.Admin' . "\0" . 'Social media share buttons' => 'SENT_ADMIN_DISPLAY',
-            'Modules.Sharebuttons.Admin' . "\0" . 'Instagram, YouTube, gather your community with social media sharing buttons on product pages.' => 'SENT_ADMIN_DESC',
-            'Admin.Global' . "\0" . 'Yes' => 'SENT_YES',
-            'Admin.Global' . "\0" . 'No' => 'SENT_NO',
-            'Admin.Actions' . "\0" . 'Save' => 'SENT_SAVE',
-            'Admin.Notifications.Success' . "\0" . 'Settings updated.' => 'SENT_SETTINGS_OK',
-            'Modules.Sharebuttons.Shop' . "\0" . 'Share' => 'SENT_SHOP_SHARE',
-            'Modules.Sharebuttons.Shop' . "\0" . 'Tweet' => 'SENT_SHOP_TWEET',
-            'Modules.Sharebuttons.Shop' . "\0" . 'Pinterest' => 'SENT_SHOP_PINTEREST',
-        );
-        Module::$translationReturns = $map;
+        $this->assertInternalType('string', $token);
+        $this->assertStringStartsWith('SENT[' . $domain . ']#', $token);
     }
 
     protected function seedProductFixture()
